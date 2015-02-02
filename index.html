@@ -48,6 +48,27 @@
 <h3>
 <a id="feb-2-100-pm" class="anchor" href="#feb-2-100-pm" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feb. 2, 1:00 pm</h3>
 
+<p>We will conduct a hands-on walkthrough of what MATLAB has to offer as a foundation for later tutorials throughout the semester.  We will cover the following topics:</p>
+
+<ul>
+<li>Variables, functions, sequences, dictionaries</li>
+<li>Libraries and modules</li>
+<li>Loops, logic, and conditionals</li>
+<li>Input/output, files</li>
+<li>Basic numerical examples &amp; matrix solutions</li>
+</ul>
+
+<h3>
+<a id="lesson-materials" class="anchor" href="#lesson-materials" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lesson Materials</h3>
+
+<p><img src="https://raw.githubusercontent.com/uiuc-cse/matlab-fa14/gh-pages/lessons/img/truss.png" alt="Truss image"></p>
+
+<p><img src="https://raw.githubusercontent.com/uiuc-cse/matlab-fa14/gh-pages/lessons/img/truss-matrix.png" alt="Truss matrix"></p>
+
+<p><a href="https://github.com/uiuc-cse/matlab-fa14/blob/gh-pages/lessons/exercises-beginner.pdf?raw=true">Basic Exercises</a></p>
+
+<p>Skeleton code for <a href="https://raw.githubusercontent.com/uiuc-cse/matlab-fa14/gh-pages/lessons/computedamrateofflow.m"><code>computedamrateofflow.m</code></a>.</p>
+
 <h1>
 <a id="numerical-methods--differential-equations" class="anchor" href="#numerical-methods--differential-equations" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#num-methods">Numerical Methods &amp; Differential Equations</a>
 </h1>
@@ -60,12 +81,48 @@
 <a id="part-2-feb-11-100-pm" class="anchor" href="#part-2-feb-11-100-pm" aria-hidden="true"><span class="octicon octicon-link"></span></a>
 <strong>Part 2</strong>, Feb. 11, 1:00 pm</h3>
 
-<h1>
-<a id="introduction-to-matlab-repeat" class="anchor" href="#introduction-to-matlab-repeat" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a href="#intro">Introduction to MATLAB</a> (repeat)</h1>
+<p>This tutorial focuses on the solution of differential equations and similar systems with MATLAB.</p>
 
 <h3>
-<a id="feb-17-100-pm" class="anchor" href="#feb-17-100-pm" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feb. 17, 1:00 pm</h3>
+<a id="lesson-materials-1" class="anchor" href="#lesson-materials-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lesson Materials</h3>
+
+<p><strong>Spring Interpolation Data</strong></p>
+
+<pre><code>m = [5 10 20 50 100];                   %mass data (g)
+d = [15.5 33.07 53.39 140.24 301.03];   %displacement data (mm) 
+g = 9.81;                               %g = 9.81
+F = m/1000 *g;                          %compute spring force (N)
+</code></pre>
+
+<p><strong>Heat Equation by Finite Difference Method</strong></p>
+
+<p>Finite-difference models are used throughout engineering to obtain numerical solutions to differential equations.  This particular system models the heat equation</p>
+
+<p>$$ \frac{1}{\alpha} \frac{\partial u}{\partial t} = \frac{\partial^2 u}{\partial x^2}$$</p>
+
+<p>given an initial condition of $u(x,t=0) = \sin\left(\pi x/L\right)$ and boundary conditions of $u(x=0,t) = 0$ and $u(x=L,t) = 0$.</p>
+
+<p>To approximate a derivative, the most straightforward way is to take the formal definition</p>
+
+<p>$$f'(x) = \frac{f(x+h)-f(x)}{h}$$</p>
+
+<p>and use a small but nonzero step $h$ in your calculation.</p>
+
+<p>Application of this principle to the heat equation leads to a statement of the form</p>
+
+<p>$$ \frac{1}{\alpha} \frac{u^m_i - u^{m-1}<em>i}{\Delta t} = \frac{u^{m-1}</em>{i-1} - 2 u^{m-1}<em>{i} + u^{m-1}</em>{i+1}}{\Delta x^2} $$</p>
+
+<p>or $u^m_i = \frac{\alpha \Delta t}{\Delta x^2}u^{m-1}<em>{i-1} + \left[1 - 2\left(\frac{\alpha \Delta t}{\Delta x^2}\right)\right]u^{m-1}</em>{i} + \frac{\alpha \Delta t}{\Delta x^2}u^{m-1}_{i+1}$.</p>
+
+<p>This clearly yields a way to calculate subsequent time steps point-by-point from the previous time step's data.</p>
+
+<p><img src="https://raw.githubusercontent.com/uiuc-cse/matlab-fa14/gh-pages/lessons/img/fd-stencil.png" alt=""></p>
+
+<p><strong>Radioactive Decay System of Differential Equations</strong></p>
+
+<p><img src="https://raw.githubusercontent.com/uiuc-cse/matlab-fa14/gh-pages/lessons/img/rad-decay-chain.png" alt=""></p>
+
+<p><img src="https://raw.githubusercontent.com/uiuc-cse/matlab-fa14/gh-pages/lessons/img/rad-decay.png" alt=""></p>
 
 <h1>
 <a id="parallel-matlab" class="anchor" href="#parallel-matlab" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#parallel">Parallel MATLAB</a>
@@ -73,6 +130,13 @@
 
 <h3>
 <a id="feb-16-100-pm" class="anchor" href="#feb-16-100-pm" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feb. 16, 1:00 pm</h3>
+
+<h1>
+<a id="introduction-to-matlab-repeat" class="anchor" href="#introduction-to-matlab-repeat" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a href="#intro">Introduction to MATLAB</a> (repeat)</h1>
+
+<h3>
+<a id="feb-17-100-pm" class="anchor" href="#feb-17-100-pm" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feb. 17, 1:00 pm</h3>
 
 <h1>
 <a id="plotting" class="anchor" href="#plotting" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#plot">Plotting</a>
