@@ -13,7 +13,9 @@ You can also break up tasks by data, using the idea of SPMD—"Single Program, M
 To start a group of workers for use with MATLAB, type
     parpool
 
+
 #### Parallel loops • `parfor`, `parpool`
+
 `parfor` is the workhorse of PCT.  Naïvely, you can expect to just replace your `for`s with `parfor`s and gain the benefit of multiple cores.  In practice, you often have to tweak your algorithms a bit to remove loop dependencies.
 
 As an example, we may want to calculate the result of some complicated nonvector function on a vector.  We'll use `sin` as a stand-in:
@@ -103,11 +105,43 @@ Conveniently, if there is no parallel pool available, `parfor` simply reduces to
 
 If `parfor` isn't adequate to your problem, there are several other options, like batch scripting and distributed array computing.
 
+Conveniently, if there is no parallel pool available, `parfor` simply reduces to `for`-like serial behavior.
+
+Anyway, if `parfor` isn't adequate to your problem, there are several other options, like batch scripting and distributed array computing.
 
 #### Batch scripts • `batch`
 
+The `batch` command allows you to offload work from your Matlab session to run in the background of another section. The general procedure when using batch is the following:
 
-#### Distributed data & control • `distributed`, `spmd`
+	1. use the batch command in the command window
+	2. wait for the job to finish before trying to retrieve the results 
+	3. load the results from the variables back into the workspace
+	4. delete the job from the workspace
+
+This can be found here: [Source](http://www.mathworks.com/help/distcomp/introduction-to-parallel-solutions.html#brjw1fx-2)
+
+The batch function can be used in several different forms.  You can use it on script files like this:
+
+	job = batch('aScript');
+
+It can be used on a function like this:
+
+	job = batch(fcn, N, {x1, x2, ..., xn});
+
+where fcn is either the function handle or the function's name in single quotes, N is the number of output arguments from the function, and {x1, x2, ..., xn} is a cell array of input arguments. 
+
+More specifications on the `batch` function can be found here: [Source](http://www.mathworks.com/help/distcomp/batch.html)
+
+To demonstrate this, download decay_scheme.m and decaySchemeMain.m from website. If we uncomment the call to ode45 in the script file, this run takes a LONG time.  So, we can run it in the background while we work on other things by calling `batch`:
+
+	job = batch('decaySchemeMain', 'AttachedFiles', {'decay_scheme.m'});
+	% work on other things: create variables, run scripts, etc...
+	% when finished with other work, if the batch is still running, type:
+	wait(job);
+	% you can no longer work in the command window now until your batch run is done.  Once it is finished, you can load your outputs with:
+	load(job);
+
+#### Distributed data • `distributed`, `spmd`
 
 (also some good stuff here:  http://www.bu.edu/tech/support/research/training-consulting/online-tutorials/matlab-pct/distributed-array-examples/)
 
@@ -219,16 +253,85 @@ Another example ([source](https://stackoverflow.com/questions/13071485/matlab-sl
     
     isequal(d, d_dist)
 
-
 #### GPU programming • `gpuArray`, `arrayfun`, `feval`
+
+GPU stands for Graphics Processing Unit.  Originally used for graphics rendering, GPUs are increasingly being used to speed up scientific calculations as well.  GPUs have hundreds of integer and floating-point processors and dedicated, high-speed memory, compared to a traditional CPU which has a handful of cores.
+
+A GPU can accelerate the execution of your application if the following two things are true: 
+	1. your program is computationally intensive 
+	2. your program is massively parallel and can be broken down into hundreds / thousands of independent work units.  
+
+If your program doesn't satisfy both of these items, using your CPU would be better in your case.
+
+If you decide to use the GPU, you need to convert your data from the Matlab workspace to the GPU's memory. This is accomplished with the following command:
+
+	A = gpuArray(data_array);
+
+A is stored on the GPU, but is still visible in the Matlab workspace.  If you want to check to see if a variable is stored on the GPU or not, you can use:
+
+	class(A)
+
+which will return the following if A is stored on the GPU:
+
+	ans = gpuArray
+
+More than 100 built-in Matlab functions can handle GPUArray inputs.  Once you have finished your computations in the GPU's memory, when you want to bring your variables back into the workspace memory, you can use:
+
+	B = gather(A);
+
+To create gpuArrays directly, just tack on 'gpuArray' to the argument list like this:
+
+	A = eye(5, 'gpuArray');
+	B = ones(3, 'gpuArray');
+
+For a complete list of methods which are compatible with gpuArrays, type:
+
+	methods('gpuArray');
+
+To determine which data type is stored in a specific gpuArray, type:
+	
+	classUnderlying(G)
+
+This will return "double" if the numbers stored in the array have decimals and so on.
+
+Many Matlab functions work on gpuArrays just like they do on typical arrays.  For example, `arrayfun` evaluates on a function for array input arguments.  Let's define the following function:
+
+	function [d, f] = aFunction(a, b, c)
+        d = a + b;
+        f = d .* c + 2;
+end
+
+We can call arrayfun on this function and give it 3 gpuArray inputs and it will evaluate the function element-by-element  on the three input arrays.
+
+	N = 1000;
+	s1 = gpuArray.rand(N);
+s2 = gpuArray.rand(N);
+s3 = gpuArray.rand(N);
+	[d, f] = arrayfun(@aFunction, s1, s2, s3);
+
+The same implementation can be used with `feval` to handle gpuArrays as well.
 
 
 #### MapReduce programming • `mapreduce`
 
+MapReduce is a programming technique for analyzing data sets that do not fit in memory. It processes the data in small sets that can individually fit in memory.  Each set goes through two phases:
+
+	Map phase: formats the data to be processed
+	Reduce phase: 	accumulates all intermediate results to produce a final result
+
+This technique is both flexible and extremely powerful on large collections of data, but it is not well-suited for regular-sized datasets which can be loaded directly into the workspace and analyzed with traditional techniques.
+
+Some good information and examples can be found here: [Source](http://www.mathworks.com/help/matlab/import_export/getting-started-with-mapreduce.html)
 
 #### Profiling • `mpiprofile`
 
+Profiling is a way to measure where a program spends time. Matlab has a graphical user interface which you can use which visually shows you the results from the "profile" function.  You can use the profiler to determine which functions your program is spending the most time in.  Then, once you determine why that is the case, you can work on ways to minimize the use of those functions, thereby improving your performace.
 
+General information on profiling is found here: [Source](http://www.mathworks.com/help/matlab/matlab_prog/profiling-for-improving-performance.html)
+
+The function `mpiprofile` is the version to profile processes in parallel.  It aggregates statistics on execution time and communication times. 
+
+`mpiprofile` information is found here: [Source](http://www.mathworks.com/help/distcomp/mpiprofile.html)
 
 ## Distributed Compute Server (DCS)
 
