@@ -27,7 +27,7 @@ This lesson introduces the basic features of MATLAB's plotting system, including
 <a id='motiv'></a>
 ### Motivating Example
 
-Let us consider 
+Let us consider patient inflammation data.  This dataset records relative pain levels or inflammation in patients with arthritis.
 
     str = urlread('https://raw.githubusercontent.com/swcarpentry/matlab-novice-inflammation/gh-pages/data/inflammation-01.csv');
     str = strrep(str, ' ', ';');
