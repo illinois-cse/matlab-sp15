@@ -1,4 +1,5 @@
 [![](https://bytebucket.org/davis68/resources/raw/f7c98d2b95e961fae257707e22a58fa1a2c36bec/logos/baseline_cse_wdmk.png?token=be4cc41d4b2afe594f5b1570a3c5aad96a65f0d6)](http://cse.illinois.edu/)
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 # Plotting in MATLAB
 <a id='intro'></a>
@@ -13,7 +14,7 @@ This lesson introduces the basic features of MATLAB's plotting system, including
     - [Motivating Example](#motiv)
     - [Basic Functionality](#basics)
     - [Color](#color)
-    - [Specific Functions](#morespecfn)
+    - [Specific Functions](#specfn)
 - [Professional Plotting](#prof)
 - [References](#refs)
 - [Credits](#credits)
@@ -21,7 +22,7 @@ This lesson introduces the basic features of MATLAB's plotting system, including
 
 ---
 <a id='plot'></a>
-## Plotting in 2D
+## Plotting
 
 <a id='motiv'></a>
 ### Motivating Example
@@ -401,63 +402,48 @@ Using standard commands, you can easily design publication-quality output.  You 
         y(6,:) = besseli(1, x);
         y(7,:) = besselk(0, x);
         y(8,:) = besselk(1, x);
+        
+        figure
+        hold on
+        plot(x, y(1,:), 'r-',  'LineWidth', 2, 'DisplayName', '$J_0(x)$');
+        plot(x, y(2,:), 'r--', 'LineWidth', 2, 'DisplayName', '$J_1(x)$');
+        plot(x, y(3,:), 'b-',  'LineWidth', 2, 'DisplayName', '$Y_0(x)$');
+        plot(x, y(4,:), 'b--', 'LineWidth', 2, 'DisplayName', '$Y_1(x)$');
+        plot(x, y(5,:), 'g-',  'LineWidth', 2, 'DisplayName', '$I_0(x)$');
+        plot(x, y(6,:), 'g--', 'LineWidth', 2, 'DisplayName', '$I_1(x)$');
+        plot(x, y(7,:), 'y-',  'LineWidth', 2, 'DisplayName', '$K_0(x)$');
+        plot(x, y(8,:), 'y--', 'LineWidth', 2, 'DisplayName', '$K_1(x)$');
+        
+        title('Examples of Zeroth- and First-Order Bessel Functions')
+        
+        legend('show');
+        set(legend,'Interpreter','latex','FontSize',24,'EdgeColor',[1 1 1],'Location','bestoutside');
+        
+        ylim([-1 2]);
+        ylabel('$f(x)$','Interpreter','latex','FontSize',18)
+        ylabel('$x$','Interpreter','latex','FontSize',18)
+
+    There are a few situations when you may want your plots to be in black and white, such as publication in a journal or when your article may be photocopied.  Here we set the same lines to monochrome equivalents.
 
         figure
         hold on
-        plot(x, y(0,:), 'r-', 'LineWidth', 2, label=r'$J_0(x)$')
-        plot(x, y[1], 'r--', lw=2, label=r'$J_1(x)$')
-        plot(x, y[2], 'b-', lw=2, label=r'$Y_0(x)$')
-        plot(x, y[3], 'b--', lw=2, label=r'$Y_1(x)$')
-        plot(x, y[4], 'g-', lw=2, label=r'$I_0(x)$')
-        plot(x, y[5], 'g--', lw=2, label=r'$I_1(x)$')
-        plot(x, y[6], 'y-', lw=2, label=r'$K_0(x)$')
-        plot(x, y[7], 'y--', lw=2, label=r'$K_1(x)$')
-
-        ax.set_title(r'Examples of Zeroth- and First-Order Bessel Functions', fontsize=24, family='serif')
-        ax.set_ylabel(r'$f(x)$', fontsize=18)
-        ax.set_xlabel(r'$x$', fontsize=18)
-        ax.set_ylim((-1, 2))
-
-        from matplotlib import font_manager as fm
-        ticks_font = fm.FontProperties(family='serif', size=14)
-        for label in ax.get_xticklabels(): label.set_fontproperties(ticks_font)
-        for label in ax.get_yticklabels(): label.set_fontproperties(ticks_font)
-
-        ax.legend(loc='best', prop={'size':18}, ncol=4) #you often have to oversize LaTeX code to make it look right in MPL
-
-        plt.savefig('bessel.png', dpi=120, transparent=True)
-        plt.show()
-
-    There are a few situations when you may want your plots to be in black and white, such as publication in a journal or when your article may be photocopied.
-
-        # In[ ]:
-
-        # the only difference here is that we set the lines to grayscale for publication purposes
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.plot(x, y[0], 'k-', lw=2, label=r'$J_0(x)$')
-        ax.plot(x, y[1], 'k--', lw=2, label=r'$J_1(x)$')
-        ax.plot(x, y[2], 'k.', lw=2, label=r'$Y_0(x)$')
-        ax.plot(x, y[3], 'k:', lw=2, label=r'$Y_1(x)$')
-        ax.plot(x, y[4], '-', color=(0.75,0.75,0.75), lw=2, label=r'$I_0(x)$')
-        ax.plot(x, y[5], '--', color=(0.75,0.75,0.75), lw=2, label=r'$I_1(x)$')
-        ax.plot(x, y[6], '.', color=(0.75,0.75,0.75), lw=2, label=r'$K_0(x)$')
-        ax.plot(x, y[7], ':', color=(0.75,0.75,0.75), lw=2, label=r'$K_1(x)$')
-
-        ax.set_title(r'Examples of Zeroth- and First-Order Bessel Functions', fontsize=24, family='serif')
-        ax.set_ylabel(r'$f(x)$', fontsize=18)
-        ax.set_xlabel(r'$x$', fontsize=18)
-        ax.set_ylim((-1, 2))
-
-        from matplotlib import font_manager as fm
-        ticks_font = fm.FontProperties(family='serif', size=14)
-        for label in ax.get_xticklabels(): label.set_fontproperties(ticks_font)
-        for label in ax.get_yticklabels(): label.set_fontproperties(ticks_font)
-
-        ax.legend(loc='best', prop={'size':18}, ncol=4) #you often have to oversize LaTeX code to make it look right in MPL
-
-        plt.savefig('bessel.png', dpi=120, transparent=True)
-        plt.show()
+        plot(x, y(1,:), 'k-',  'LineWidth', 2, 'DisplayName', '$J_0(x)$');
+        plot(x, y(2,:), 'k--', 'LineWidth', 2, 'DisplayName', '$J_1(x)$');
+        plot(x, y(3,:), 'k.',  'LineWidth', 2, 'DisplayName', '$Y_0(x)$');
+        plot(x, y(4,:), 'k:',  'LineWidth', 2, 'DisplayName', '$Y_1(x)$');
+        plot(x, y(5,:), '-',   'LineWidth', 2, 'DisplayName', '$I_0(x)$', 'Color', [0.75,0.75,0.75]);
+        plot(x, y(6,:), '--',  'LineWidth', 2, 'DisplayName', '$I_1(x)$', 'Color', [0.75,0.75,0.75]);
+        plot(x, y(7,:), '.',   'LineWidth', 2, 'DisplayName', '$K_0(x)$', 'Color', [0.75,0.75,0.75]);
+        plot(x, y(8,:), ':',   'LineWidth', 2, 'DisplayName', '$K_1(x)$', 'Color', [0.75,0.75,0.75]);
+        
+        title('Examples of Zeroth- and First-Order Bessel Functions')
+        
+        legend('show');
+        set(legend,'Interpreter','latex','FontSize',24,'EdgeColor',[1 1 1],'Location','bestoutside');
+        
+        ylim([-1 2]);
+        ylabel('$f(x)$','Interpreter','latex','FontSize',18)
+        ylabel('$x$','Interpreter','latex','FontSize',18)
 
     Finally, once you have a plot you are pleased with, you can export the settings as a function file which will accept your data and reproduce a stylistically-matching plot for you on demand.
 
